@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-Hans-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grouped Column</title>
+</head>
+
+<body>
+  <div id="chart"></div>
+  <script src="https://gw.alipayobjects.com/os/lib/antv/g2/4.0.14/dist/g2.min.js"></script>
+  <script>
+    const chartColors = [
+      {
+        label: 'blue',
+        value: '#1890ff',
+      },
+      {
+        label: 'green',
+        value: '#52c41a',
+      },
+      {
+        label: 'yellow',
+        value: '#fadb14',
+      },
+      {
+        label: 'cyan',
+        value: '#13c2c2',
+      },
+      {
+        label: 'orange',
+        value: '#fabc16',
+      },
+      {
+        label: 'red',
+        value: '#f5222d',
+      },
+      {
+        label: 'pink',
+        value: '#eb2f96',
+      },
+      {
+        label: 'purple',
+        value: '#722ed1',
+      },
+      {
+        label: 'geekblue',
+        value: '#2f54eb',
+      },
+      {
+        label: 'magenta',
+        value: '#eb2f96',
+      },
+      {
+        label: 'volcano',
+        value: '#fa541c',
+      },
+      {
+        label: 'gold',
+        value: '#faad14',
+      },
+      {
+        label: 'lime',
+        value: '#a0d911',
+      },
+      {
+        label: '#2fc25b',
+        value: '#2fc25b',
+      },
+      {
+        label: '#facc14',
+        value: '#facc14',
+      },
+      {
+        label: '#f04864',
+        value: '#f04864',
+      },
+      {
+        label: '#8543e0',
+        value: '#8543e0',
+      },
+    ]
+    const data = [
+      { x: '1604397251199', type: 'y1', y: 7.5798739232632855 },
+      { x: '1604397251199', type: 'y2', y: 9.848153856503279 },
+      { x: '1604397251199', type: 'y3', y: 0.04292994299113895 },
+      { x: '1604483651199', type: 'y1', y: 3.8000495559751135 },
+      { x: '1604483651199', type: 'y2', y: 3.5128608054318278 },
+      { x: '1604483651199', type: 'y3', y: 1.7400265679781857 },
+      { x: '1604570051200', type: 'y1', y: 4.885250369140048 },
+      { x: '1604570051200', type: 'y2', y: 8.58344619265807 },
+      { x: '1604570051200', type: 'y3', y: 9.671562095834132 },
+      { x: '1604656451200', type: 'y1', y: 4.403945638738458 },
+      { x: '1604656451200', type: 'y2', y: 8.603994079919568 },
+      { x: '1604656451200', type: 'y3', y: 3.289908137057558 },
+      { x: '1604742851200', type: 'y1', y: 3.6848376234258318 },
+      { x: '1604742851200', type: 'y2', y: 7.194419737226248 },
+      { x: '1604742851200', type: 'y3', y: 7.180823468041202 },
+      { x: '1604829251200', type: 'y1', y: 5.541891465658684 },
+      { x: '1604829251200', type: 'y2', y: 0.16547112825911148 },
+      { x: '1604829251200', type: 'y3', y: 3.1126019652175785 },
+      { x: '1604915651200', type: 'y1', y: 5.867644388431867 },
+      { x: '1604915651200', type: 'y2', y: 6.345875840283252 },
+      { x: '1604915651200', type: 'y3', y: 6.386999598537983 },
+      { x: '1605002051200', type: 'y1', y: 5.953810930357564 },
+      { x: '1605002051200', type: 'y2', y: 2.505006174540172 },
+      { x: '1605002051200', type: 'y3', y: 4.974959674612103 },
+      { x: '1605088451200', type: 'y1', y: 8.551338787969613 },
+      { x: '1605088451200', type: 'y2', y: 5.932194229326344 },
+      { x: '1605088451200', type: 'y3', y: 7.367637090712473 },
+      { x: '1605174851200', type: 'y1', y: 8.773983474175793 },
+      { x: '1605174851200', type: 'y2', y: 3.291503683777881 },
+      { x: '1605174851200', type: 'y3', y: 3.4936836671195115 }
+    ]
+    const chart = new G2.Chart({
+      container: 'chart',
+      autofit: true,
+      width: 1024,
+      height: 500
+    })
+    chart.data(data)
+    chart.scale({
+      x: {
+        formatter: (v) => {
+          const date = new Date(parseInt(v))
+          return date.toLocaleDateString('zh-Hans-CN')
+        }
+      },
+      y: {
+        nice: true
+      }
+    })
+    chart.legend({
+      position: 'top-right',
+    })
+    chart
+      .interval()
+      .position('x*y')
+      .color('type', chartColors.map((v) => v.value))
+      .adjust('dodge')
+
+    // chart.interaction('active-region')
+    chart.render()
+  </script>
+</body>
+
+</html>
