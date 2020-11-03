@@ -9,8 +9,10 @@
 
 <body>
   <div id="chart"></div>
+  <button>hide legend</button>
   <script src="https://gw.alipayobjects.com/os/lib/antv/g2/4.0.14/dist/g2.min.js"></script>
   <script>
+    let hasLegend = true
     const chartColors = [
       {
         label: 'blue',
@@ -117,7 +119,7 @@
       container: 'chart',
       autofit: true,
       width: 480,
-      height: 250
+      height: 250,
     })
     chart.data(data)
     chart.scale({
@@ -154,7 +156,7 @@
       }
     })
     chart.legend({
-      position: 'bottom',
+      position: 'bottom'
     })
     chart.tooltip({
       showCrosshairs: true,
@@ -166,6 +168,13 @@
       .color('type', chartColors.map((v) => v.value))
 
     chart.render()
+    const button = document.querySelector('button')
+    button.addEventListener('click', () => {
+      hasLegend = !hasLegend
+      chart.legend(hasLegend)
+      chart.render(true)
+      button.innerText = hasLegend ? 'hide legend' : 'show legend'
+    })
   </script>
 </body>
 
