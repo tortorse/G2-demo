@@ -1,14 +1,158 @@
 <!DOCTYPE html>
 <html lang="zh-Hans-CN">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Donut</title>
+  <style>
+    .donut {
+      width: 220px;
+    }
+    .legend {
+      list-style: none;
+      display: flex;
+      margin: 0;
+      padding: 0;
+      justify-content: center;
+    }
+    .legend li {
+      margin: 0 8px;
+    }
+    .dot {
+      position: relative;
+      top: -1px;
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-right: 8px;
+      border-radius: 8px;
+    }
+
+    .title {
+      color: rgba(0, 0, 0, .45);
+      font-size: 14px;
+    }
+  </style>
 </head>
+
 <body>
-  <div id="chart"></div>
+  <div class="donut">
+    <div id="chart"></div>
+    <ul class="legend">
+    </ul>
+  </div>
   <script src="https://gw.alipayobjects.com/os/lib/antv/g2/4.0.14/dist/g2.min.js"></script>
   <script>
+    let hasLegend = true
+    const data = [
+      {
+        type: '正常',
+        value: 15
+      },
+      {
+        type: '异常',
+        value: 29
+      }
+    ]
+
+    const sliceNumber = 0.012
+
+    G2.registerShape('interval', 'slice-shape', {
+      draw(cfg, container) {
+        const points = cfg.points
+        let path = []
+        path.push(['M', points[0].x, points[0].y])
+        path.push(['L', points[1].x, points[1].y - sliceNumber])
+        path.push(['L', points[2].x, points[2].y - sliceNumber])
+        path.push(['L', points[3].x, points[3].y])
+        path.push('Z')
+        path = this.parsePath(path)
+        return container.addShape('path', {
+          attrs: {
+            fill: cfg.color,
+            path
+          },
+        })
+      }
+    })
+    const chart = new G2.Chart({
+      container: 'chart',
+      autofit: true,
+      width: 220,
+      height: 200,
+      padding: 0,
+    })
+    chart.data(data)
+    chart.coordinate('theta', {
+      radius: 0.75,
+      innerRadius: 0.72,
+    })
+    chart
+      .annotation()
+      .text({
+        position: ['50%', '50%'],
+        content: 'Pods',
+        style: {
+          fontSize: 16,
+          fill: '#bfbfbf',
+          textAlign: 'center'
+        },
+        offsetY: -15
+      })
+      .text({
+        position: ['50%', '50%'],
+        content: data[0].value,
+        style: {
+          fontSize: 24,
+          textAlign: 'center'
+        },
+        offsetY: 15
+      })
+    chart
+      .interval()
+      .adjust('stack')
+      .position('value')
+      .color('type', (v) => {
+        if (v === '正常') {
+          return '#1890ff'
+        }
+        return '#fabc16'
+      })
+      .shape('slice-shape')
+    chart.removeInteraction('legend-filter')
+    chart.legend(false)
+    chart.render()
+    let legendData = getLegendData()
+    const legendDomContainer = document.querySelector('.legend')
+    legendData.map(item => {
+      const legendItem = document.createElement('li')
+      const dot = document.createElement('span')
+      dot.setAttribute('class', 'dot')
+      dot.setAttribute('style', `background-color: ${!item.checked ? '#aaa' : item.color}`)
+      const title = document.createElement('span')
+      title.setAttribute('class', 'title')
+      title.innerText = `${item.type} ${item.value}`
+      legendItem.appendChild(dot)
+      legendItem.appendChild(title)
+      legendDomContainer.appendChild(legendItem)
+    })
+
+    function getLegendData() {
+      const geom = chart.geometries[0]
+      if (!geom) {
+        return
+      }
+      const items = geom.dataArray || []
+      const legendData = items.map((item) => {
+        const origin = item[0]._origin
+        origin.color = item[0].color
+        origin.checked = true
+        return origin
+      })
+      return legendData
+    }
   </script>
 </body>
+
 </html>

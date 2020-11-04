@@ -4,3 +4,5 @@ Examples for antv/G2
 [分组柱状图](https://tortorse.github.io/g2-demo/column-grouped.html)
 
 [折线图](https://tortorse.github.io/g2-demo/line.html)
+
+[状态环图](https://tortorse.github.io/g2-demo/donut.html)
