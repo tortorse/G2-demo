@@ -5,17 +5,67 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Line</title>
+  <style>
+    body {
+      background: #d8d8d8;
+    }
+
+    .demo {
+      display: flex;
+    }
+
+    .demo section {
+      margin: 0 16px;
+    }
+
+    .demo section h2 {
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    }
+
+    .card {
+      background: #fff;
+      padding: 24px;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, .85)
+    }
+    .description {
+      font-size: 14px;
+      color: rgba(0, 0, 0, .65);
+      margin-bottom: 24px;
+    }
+  </style>
 </head>
 
 <body>
-  <section>
-    <h2>normal line</h2>
-    <div id="normal-line"></div>
-    <button>hide legend</button>
-  </section>
-  <section>
-
-  </section>
+  <div class="demo">
+    <section>
+      <h2>normal line</h2>
+      <div class="card">
+        <div id="normal-line"></div>
+      </div>
+      <button>hide legend</button>
+    </section>
+    <section>
+      <h2>title in chart</h2>
+      <div class="card">
+        <div id="title-line"></div>
+      </div>
+    </section>
+    <section>
+      <h2>title out chart</h2>
+      <div class="card">
+        <h3 class="title">多折线图</h3>
+        <p class="description">一个简单的多折线图</p>
+        <div id="dom-title-line"></div>
+      </div>
+    </section>
+  </div>
   <script src="https://gw.alipayobjects.com/os/lib/antv/g2/4.0.14/dist/g2.min.js"></script>
   <script>
     let hasLegend = true
@@ -65,14 +115,14 @@
       { x: '1604394942432', type: 'y2', y: 3.291503683777881 },
       { x: '1604394942432', type: 'y3', y: 3.4936836671195115 }
     ]
-    const chart = new G2.Chart({
+    const normalLine = new G2.Chart({
       container: 'normal-line',
       autofit: true,
       width: 480,
       height: 250,
     })
-    chart.data(data)
-    chart.scale({
+    normalLine.data(data)
+    normalLine.scale({
       x: {
         tickCount: 6,
         formatter: (v) => {
@@ -105,7 +155,7 @@
         }
       }
     })
-    chart.axis('y',
+    normalLine.axis('y',
       {
         grid:
         {
@@ -115,26 +165,176 @@
         }
       }
     )
-    chart.legend({
+    normalLine.legend({
       position: 'bottom'
     })
-    chart.tooltip({
+    normalLine.tooltip({
       showCrosshairs: true,
       shared: true
     })
-    chart
+    normalLine
       .line()
       .position('x*y')
       .color('type', chartColors.map((v) => v.value))
 
-    chart.render()
+    normalLine.render()
     const button = document.querySelector('button')
     button.addEventListener('click', () => {
       hasLegend = !hasLegend
-      chart.legend(hasLegend)
-      chart.render(true)
+      normalLine.legend(hasLegend)
+      normalLine.render(true)
       button.innerText = hasLegend ? 'hide legend' : 'show legend'
     })
+
+    const titleLine = new G2.Chart({
+      container: 'title-line',
+      autofit: true,
+      width: 560,
+      height: 380,
+      appendPadding: [80, 0, 0, 0]
+    })
+    titleLine.data(data)
+    titleLine.scale({
+      x: {
+        tickCount: 6,
+        formatter: (v) => {
+          const date = new Date(parseInt(v))
+          return date.toLocaleTimeString('zh-Hans-CN', {
+            timeStyle: 'short',
+            hourCycle: 'h24'
+          })
+        }
+      },
+      y: {
+        tickCount: 5,
+        nice: true,
+        formatter: (v) => {
+          return Math.floor(v)
+        }
+      },
+      type: {
+        formatter: (v) => {
+          if (v === 'y1') {
+            return '标准'
+          }
+          if (v === 'y2') {
+            return '占用'
+          }
+          if (v === 'y3') {
+            return '配额'
+          }
+          return v
+        }
+      }
+    })
+    titleLine.axis('y',
+      {
+        grid:
+        {
+          line: {
+            style: { lineDash: [2, 2] }
+          }
+        }
+      }
+    )
+    titleLine.legend({
+      position: 'bottom'
+    })
+    titleLine.tooltip({
+      showCrosshairs: true,
+      shared: true
+    })
+    titleLine
+      .line()
+      .position('x*y')
+      .color('type', chartColors.map((v) => v.value))
+    titleLine.annotation().clear(true)
+    titleLine.annotation().text({
+      offsetY: -314,
+      offsetX: -20,
+      content: '多折线图',
+      style: {
+        fontSize: 20,
+        fill: '#000000',
+        stroke: null,
+        shadowColor: null
+      }
+    })
+    titleLine.annotation().text({
+      offsetY: -280,
+      offsetX: -20,
+      content: '一个简单的多折线图',
+      style: {
+        fontSize: 14,
+        fill: '#999999',
+        stroke: null,
+        shadowColor: null
+      }
+    })
+    titleLine.render()
+    const domTitleLine = new G2.Chart({
+      container: 'dom-title-line',
+      autofit: true,
+      width: 560,
+      height: 300,
+      appendPadding: [0, 0, 0, 0]
+    })
+    domTitleLine.data(data)
+    domTitleLine.scale({
+      x: {
+        tickCount: 6,
+        formatter: (v) => {
+          const date = new Date(parseInt(v))
+          return date.toLocaleTimeString('zh-Hans-CN', {
+            timeStyle: 'short',
+            hourCycle: 'h24'
+          })
+        }
+      },
+      y: {
+        tickCount: 5,
+        nice: true,
+        formatter: (v) => {
+          return Math.floor(v)
+        }
+      },
+      type: {
+        formatter: (v) => {
+          if (v === 'y1') {
+            return '标准'
+          }
+          if (v === 'y2') {
+            return '占用'
+          }
+          if (v === 'y3') {
+            return '配额'
+          }
+          return v
+        }
+      }
+    })
+    domTitleLine.axis('y',
+      {
+        grid:
+        {
+          line: {
+            style: { lineDash: [2, 2] }
+          }
+        }
+      }
+    )
+    domTitleLine.legend({
+      position: 'bottom'
+    })
+    domTitleLine.tooltip({
+      showCrosshairs: true,
+      shared: true
+    })
+    domTitleLine
+      .line()
+      .position('x*y')
+      .color('type', chartColors.map((v) => v.value))
+    domTitleLine.render()
   </script>
 </body>
 
