@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-Hans-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Line</title>
+  <style>
+    body {
+      background: #d8d8d8;
+    }
+
+    .demo {
+      display: flex;
+    }
+
+    .demo section {
+      margin: 0 16px;
+    }
+
+    .demo section h2 {
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    }
+
+    .card {
+      background: #fff;
+      padding: 24px;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 500;
+      color: rgba(0, 0, 0, .85);
+    }
+
+    .description {
+      font-size: 14px;
+      color: rgba(0, 0, 0, .65);
+      margin-bottom: 24px;
+    }
+
+    .chart {
+      background: rgb(239, 255, 8);
+    }
+
+    .legend {
+      list-style: none;
+    }
+
+    .legend span {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <a href="/g2-demo/">home</a>
+  <div class="demo">
+    <section>
+      <div class="card">
+        <h3 class="title">多折线图</h3>
+        <p class="description">一个简单的多折线图</p>
+        <div id="note"></div>
+      </div>
+    </section>
+    <section>
+      <div class="card">
+        <h3 class="title" style="background-color:cyan;;">多折线图</h3>
+        <p class="description" style="background-color: chartreuse;">一个简单的多折线图</p>
+        <div id="demo" class="chart"></div>
+      </div>
+    </section>
+    <ul class="legend">
+      <li><span style="background-color: #fff;"></span>title</li>
+      <li><span style="background-color: chartreuse;"></span>description</li>
+      <li><span style="background-color: rgb(239, 255, 8);"></span>chart: 本身无内 padding, 可以设置上下左右。</li>
+    </ul>
+  </div>
+  <script src="https://gw.alipayobjects.com/os/lib/antv/g2/4.0.14/dist/g2.min.js"></script>
+  <script>
+    let hasLegend = true
+    const chartColors = [
+      {
+        label: 'blue',
+        value: '#1890ff',
+      },
+      {
+        label: 'green',
+        value: '#52c41a',
+      },
+      {
+        label: 'yellow',
+        value: '#fadb14',
+      }
+    ]
+    const data = [
+      { x: '1604378742431', type: 'y1', y: 7.5798739232632855 },
+      { x: '1604378742431', type: 'y2', y: 9.848153856503279 },
+      { x: '1604378742431', type: 'y3', y: 0.04292994299113895 },
+      { x: '1604380542431', type: 'y1', y: 3.8000495559751135 },
+      { x: '1604380542431', type: 'y2', y: 3.5128608054318278 },
+      { x: '1604380542431', type: 'y3', y: 1.7400265679781857 },
+      { x: '1604382342431', type: 'y1', y: 4.885250369140048 },
+      { x: '1604382342431', type: 'y2', y: 8.58344619265807 },
+      { x: '1604382342431', type: 'y3', y: 9.671562095834132 },
+      { x: '1604384142431', type: 'y1', y: 4.403945638738458 },
+      { x: '1604384142431', type: 'y2', y: 8.603994079919568 },
+      { x: '1604384142431', type: 'y3', y: 3.289908137057558 },
+      { x: '1604385942431', type: 'y1', y: 3.6848376234258318 },
+      { x: '1604385942431', type: 'y2', y: 7.194419737226248 },
+      { x: '1604385942431', type: 'y3', y: 7.180823468041202 },
+      { x: '1604387742432', type: 'y1', y: 5.541891465658684 },
+      { x: '1604387742432', type: 'y2', y: 0.16547112825911148 },
+      { x: '1604387742432', type: 'y3', y: 3.1126019652175785 },
+      { x: '1604389542432', type: 'y1', y: 5.867644388431867 },
+      { x: '1604389542432', type: 'y2', y: 6.345875840283252 },
+      { x: '1604389542432', type: 'y3', y: 6.386999598537983 },
+      { x: '1604391342432', type: 'y1', y: 5.953810930357564 },
+      { x: '1604391342432', type: 'y2', y: 2.505006174540172 },
+      { x: '1604391342432', type: 'y3', y: 4.974959674612103 },
+      { x: '1604393142432', type: 'y1', y: 8.551338787969613 },
+      { x: '1604393142432', type: 'y2', y: 5.932194229326344 },
+      { x: '1604393142432', type: 'y3', y: 7.367637090712473 },
+      { x: '1604394942432', type: 'y1', y: 8.773983474175793 },
+      { x: '1604394942432', type: 'y2', y: 3.291503683777881 },
+      { x: '1604394942432', type: 'y3', y: 3.4936836671195115 }
+    ]
+    const demo = new G2.Chart({
+      container: 'demo',
+      autofit: true,
+      width: 560,
+      height: 300,
+      appendPadding: [0, 0, 0, 0]
+    })
+    demo.data(data)
+    demo.scale({
+      x: {
+        tickCount: 6,
+        formatter: (v) => {
+          const date = new Date(parseInt(v))
+          return date.toLocaleTimeString('zh-Hans-CN', {
+            timeStyle: 'short',
+            hourCycle: 'h24'
+          })
+        }
+      },
+      y: {
+        tickCount: 5,
+        nice: true,
+        formatter: (v) => {
+          return Math.floor(v)
+        }
+      },
+      type: {
+        formatter: (v) => {
+          if (v === 'y1') {
+            return '标准'
+          }
+          if (v === 'y2') {
+            return '占用'
+          }
+          if (v === 'y3') {
+            return '配额'
+          }
+          return v
+        }
+      }
+    })
+    demo.axis('y',
+      {
+        grid:
+        {
+          line: {
+            style: { lineDash: [2, 2] }
+          }
+        }
+      }
+    )
+    demo.legend({
+      position: 'bottom'
+    })
+    demo.tooltip({
+      showCrosshairs: true,
+      shared: true
+    })
+    demo
+      .line()
+      .position('x*y')
+      .color('type', chartColors.map((v) => v.value))
+    demo.render()
+
+    const note = new G2.Chart({
+      container: 'note',
+      autofit: true,
+      width: 560,
+      height: 300,
+      appendPadding: [0, 0, 0, 0]
+    })
+    note.data(data)
+    note.scale({
+      x: {
+        tickCount: 6,
+        formatter: (v) => {
+          const date = new Date(parseInt(v))
+          return date.toLocaleTimeString('zh-Hans-CN', {
+            timeStyle: 'short',
+            hourCycle: 'h24'
+          })
+        }
+      },
+      y: {
+        tickCount: 5,
+        nice: true,
+        formatter: (v) => {
+          return Math.floor(v)
+        }
+      },
+      type: {
+        formatter: (v) => {
+          if (v === 'y1') {
+            return '标准'
+          }
+          if (v === 'y2') {
+            return '占用'
+          }
+          if (v === 'y3') {
+            return '配额'
+          }
+          return v
+        }
+      }
+    })
+    note.axis('y',
+      {
+        grid:
+        {
+          line: {
+            style: { lineDash: [2, 2] }
+          }
+        }
+      }
+    )
+    note.legend({
+      position: 'bottom'
+    })
+    note.tooltip({
+      showCrosshairs: true,
+      shared: true
+    })
+    note
+      .line()
+      .position('x*y')
+      .color('type', chartColors.map((v) => v.value))
+    note.render()
+  </script>
+</body>
+
+</html>
